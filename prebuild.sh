@@ -9,5 +9,8 @@ set -o nounset
 
 GITHASH="$(git log -1 --pretty="format:%h")"
 GITCOMMITDATE="$(git log -1 --pretty="format:%ci")"
-sed -e 's/@GITHASH@/'"${GITHASH}"'/g' -e 's/@GITCOMMITDATE@/'"${GITCOMMITDATE}"'/g' src/index.template.html > htdocs/index.html
+for TEMPLATEFILE in src/*.template.html ; do
+	OUTPUTFILE="$(echo ${TEMPLATEFILE}|sed 's/^[^\/]*\/\(.*\)\.template\.html$/htdocs\/\1.html/')"
+	sed -e 's/@GITHASH@/'"${GITHASH}"'/g' -e 's/@GITCOMMITDATE@/'"${GITCOMMITDATE}"'/g' "${TEMPLATEFILE}" > "${OUTPUTFILE}"
+done
 
