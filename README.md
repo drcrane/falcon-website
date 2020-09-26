@@ -26,7 +26,7 @@ To check that it works, switch to a new terminal and use curl:
 
 Discover the IP address and connect directly:
 
-    FALCONIP=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}') \
+    FALCONIP=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' falcon_website) \
         curl http://${FALCONIP}:8080
 
 When the requests have been made a log entry should appear after the run
