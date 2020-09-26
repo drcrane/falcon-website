@@ -1,0 +1,6 @@
+#!/bin/ash
+echo nginx running on $PORT
+sed -r 's/(listen[ ]+)[0-9]+([^;]*);$/\1'$PORT'\2;/; s/(listen[ ]+\[::\]:)[0-9]+([^;]*);$/\1'$PORT'\2;/' /home/app/nginx.template.conf > /etc/nginx/nginx.conf
+mkdir /run/nginx
+exec nginx -g 'daemon off;'
+
