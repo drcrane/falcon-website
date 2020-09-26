@@ -1,4 +1,4 @@
-def docker_registry = 'drcrane/falkon-website'
+def docker_registry = 'drcrane/falcon-website'
 def docker_image = ''
 def docker_image_version = ''
 def docker_registry_credentials = 'cdaa15fc-a2e8-4bf9-aa9b-4fb626493961'
@@ -17,14 +17,7 @@ node {
 		).trim()
 	}
 	stage('Build') {
-		/* Check there is no space in the JOB_NAME */
-		if ("${env.JOB_NAME}".indexOf(" ") == -1) {
-			// sh 'docker build --tag ${JOB_NAME}:$(git log -1 --pretty="format:%h") --file Dockerfile .'
-			docker_image = docker.build docker_registry + ":${docker_image_version}"
-		} else {
-			echo 'Cannot have spaces in job name'
-			currentBuild.result = 'FAILURE'
-		}
+		docker_image = docker.build docker_registry + ":${env.BUILD_NUMBER}-${docker_image_version}"
 	}
 	stage('Push to Docker Hub') {
 		docker.withRegistry ('', docker_registry_credentials) {
@@ -35,6 +28,7 @@ node {
 		// Tell Kubernetes to run the latest version
 	}
 	stage('Cleanup') {
+		sh "docker rmi ${docker_registry}:${env.BUILD_NUMBER}-${docker_image_version}"
 		cleanWs()
 	}
 }
