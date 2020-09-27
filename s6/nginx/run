@@ -1,6 +1,12 @@
 #!/bin/ash
-echo nginx running on $PORT
-sed -r 's/(listen[ ]+)[0-9]+([^;]*);$/\1'$PORT'\2;/; s/(listen[ ]+\[::\]:)[0-9]+([^;]*);$/\1'$PORT'\2;/' /home/app/nginx.template.conf > /etc/nginx/nginx.conf
+cd /home/app
+./create_pem.sh
+echo "nginx running on ${PORT}"
+sed -r 's/(listen[ ]+)[0-9]+([^;]*);$/\1'"${PORT}"'\2;/; s/(listen[ ]+\[::\]:)[0-9]+([^;]*);$/\1'"${PORT}"'\2;/' /home/app/nginx.template.conf > /etc/nginx/nginx.conf
+if [ -f /etc/nginx/bengreen.eu.cert ] && [ "x${SSLPORT}" != "x" ] ; then
+echo "nginx ssl port ${SSLPORT}"
+sed -r 's/(listen[ ]+)[0-9]+([^;]*);$/\1'"${SSLPORT}"'\2;/; s/(listen[ ]+\[::\]:)[0-9]+([^;]*);$/\1'"${SSLPORT}"'\2;/' /home/app/ssl.template.conf > /etc/nginx/ssl.conf
+fi
 mkdir /run/nginx
 exec nginx -g 'daemon off;'
 
