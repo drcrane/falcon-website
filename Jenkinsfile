@@ -36,7 +36,9 @@ node {
 		}
 	}
 	stage('Cleanup') {
-		sh "docker rmi ${docker_registry}:${env.BUILD_NUMBER}-${docker_image_version}"
+		// Because minikube is hosted on this machine attempting to remove it will cause the build to fail.
+		// ignore for now.
+		//sh "docker rmi ${docker_registry}:${env.BUILD_NUMBER}-${docker_image_version}"
 		cleanWs()
 	}
 }
