@@ -26,6 +26,12 @@ node {
 	}
 	stage('Deploy') {
 		// Tell Kubernetes to run the latest version
+		sshagent(credentials: ['e92e2ece-2e9d-44bb-a377-d8a333c1f327']) {
+			sh "ssh -o StrictHostKeyChecking=no debian@172.17.0.1 " + 
+				"\"sudo KUBECONFIG=/root/azure-falcon-website-k8s minikube " +
+				"kubectl set image deployment/falcon-website-app " +
+				"falcon-website-container=drcrane/${docker_registry}:${env.BUILD_NUMBER}-${docker_image_version}\""
+		}
 	}
 	stage('Cleanup') {
 		sh "docker rmi ${docker_registry}:${env.BUILD_NUMBER}-${docker_image_version}"
